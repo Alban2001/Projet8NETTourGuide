@@ -38,9 +38,9 @@ public class RewardsService : IRewardsService
         List<VisitedLocation> userLocations = user.VisitedLocations;
         List<Attraction> attractions = _gpsUtil.GetAttractions();
 
-        foreach (var visitedLocation in userLocations)
+        foreach (var visitedLocation in userLocations.ToList())
         {
-            foreach (var attraction in attractions)
+            foreach (var attraction in attractions.ToList())
             {
                 if (!user.UserRewards.Any(r => r.Attraction.AttractionName == attraction.AttractionName))
                 {
