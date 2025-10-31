@@ -1,4 +1,5 @@
 ﻿using GpsUtil.Location;
+using System.Text.Json.Nodes;
 using TourGuide.LibrairiesWrappers.Interfaces;
 using TourGuide.Services.Interfaces;
 using TourGuide.Users;
@@ -18,7 +19,7 @@ public class RewardsService : IRewardsService
     public RewardsService(IGpsUtil gpsUtil, IRewardCentral rewardCentral)
     {
         _gpsUtil = gpsUtil;
-        _rewardsCentral =rewardCentral;
+        _rewardsCentral = rewardCentral;
         _proximityBuffer = _defaultProximityBuffer;
     }
 
@@ -57,6 +58,24 @@ public class RewardsService : IRewardsService
     {
         Console.WriteLine(GetDistance(attraction, location));
         return GetDistance(attraction, location) <= _attractionProximityRange;
+    }
+
+    public List<NearbyAttraction> ClosestFiveAttractions(Locations location, User user)
+    {
+        // Pour chaque attraction, on calcule la distance avec la location de l'utilisateur puis on les classe juste après et on récupère les 5 les plus proches
+        List<Attraction> attractions = _gpsUtil.GetAttractions();
+        var closestAttractions = attractions
+            .Select(a => new NearbyAttraction
+            {
+                Attraction = a,
+                Distance = GetDistance(a, location),
+                RewardPoints = GetRewardPoints(a, user)
+            })
+            .OrderBy(x => x.Distance)
+            .Take(5)
+            .ToList();
+
+        return closestAttractions;
     }
 
     private bool NearAttraction(VisitedLocation visitedLocation, Attraction attraction)

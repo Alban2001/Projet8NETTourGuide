@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Globalization;
+using System.Text.Json.Nodes;
 using TourGuide.LibrairiesWrappers.Interfaces;
 using TourGuide.Services.Interfaces;
 using TourGuide.Users;
@@ -90,18 +91,26 @@ public class TourGuideService : ITourGuideService
         return visitedLocation;
     }
 
-    public List<Attraction> GetNearByAttractions(VisitedLocation visitedLocation)
+    public JsonArray GetNearByAttractions(VisitedLocation visitedLocation, User user)
     {
-        List<Attraction> nearbyAttractions = new ();
-        foreach (var attraction in _gpsUtil.GetAttractions())
+        JsonArray jsonArray = new JsonArray();
+        foreach (var a in _rewardsService.ClosestFiveAttractions(visitedLocation.Location, user))
         {
-            if (_rewardsService.IsWithinAttractionProximity(attraction, visitedLocation.Location))
+            var attractionJson = new JsonObject
             {
-                nearbyAttractions.Add(attraction);
-            }
+                ["AttractionName"] = a.Attraction.AttractionName,
+                ["Distance"] = a.Distance,
+                ["LatUser"] = visitedLocation.Location.Latitude,
+                ["LongUser"] = visitedLocation.Location.Longitude,
+                ["LatAttraction"] = a.Attraction.Latitude,
+                ["LongAttraction"] = a.Attraction.Longitude,
+                ["Rewards"] = a.RewardPoints
+            };
+
+            jsonArray.Add(attractionJson);
         }
 
-        return nearbyAttractions;
+        return jsonArray;
     }
 
     private void AddShutDownHook()

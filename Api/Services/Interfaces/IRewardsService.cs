@@ -10,5 +10,6 @@ namespace TourGuide.Services.Interfaces
         bool IsWithinAttractionProximity(Attraction attraction, Locations location);
         void SetDefaultProximityBuffer();
         void SetProximityBuffer(int proximityBuffer);
+        List<NearbyAttraction> ClosestFiveAttractions(Locations location, User user);
     }
 }

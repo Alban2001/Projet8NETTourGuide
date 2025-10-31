@@ -37,7 +37,7 @@ public class TourGuideController : ControllerBase
     public ActionResult<List<Attraction>> GetNearbyAttractions([FromQuery] string userName)
     {
         var visitedLocation = _tourGuideService.GetUserLocation(GetUser(userName));
-        var attractions = _tourGuideService.GetNearByAttractions(visitedLocation);
+        var attractions = _tourGuideService.GetNearByAttractions(visitedLocation, GetUser(userName));
         return Ok(attractions);
     }
 
