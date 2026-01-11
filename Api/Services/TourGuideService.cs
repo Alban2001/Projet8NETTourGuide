@@ -50,9 +50,9 @@ public class TourGuideService : ITourGuideService
         return user.UserRewards;
     }
 
-    public VisitedLocation GetUserLocation(User user)
+    public async Task<VisitedLocation> GetUserLocation(User user)
     {
-        return user.VisitedLocations.Any() ? user.GetLastVisitedLocation() : TrackUserLocation(user);
+        return user.VisitedLocations.Any() ? user.GetLastVisitedLocation() : await TrackUserLocation(user);
     }
 
     public User GetUser(string userName)
@@ -83,18 +83,32 @@ public class TourGuideService : ITourGuideService
         return providers;
     }
 
-    public VisitedLocation TrackUserLocation(User user)
+    //public async Task<VisitedLocation> TrackUserLocation(User user)
+    //{
+    //    VisitedLocation visitedLocation = await _gpsUtil.GetUserLocation(user.UserId);
+    //    user.AddToVisitedLocations(visitedLocation);
+    //    await _rewardsService.CalculateRewards(user);
+    //    return visitedLocation;
+    //}
+
+    public async Task<VisitedLocation> TrackUserLocation(User user)
     {
-        VisitedLocation visitedLocation = _gpsUtil.GetUserLocation(user.UserId);
-        user.AddToVisitedLocations(visitedLocation);
-        _rewardsService.CalculateRewards(user);
+        VisitedLocation visitedLocation = await _gpsUtil.GetUserLocation(user.UserId);
+
+        lock (user.VisitedLocations)
+        {
+            user.AddToVisitedLocations(visitedLocation);
+        }
+
+        await _rewardsService.CalculateRewardsAsync(user);
+
         return visitedLocation;
     }
 
-    public JsonArray GetNearByAttractions(VisitedLocation visitedLocation, User user)
+    public async Task<JsonArray> GetNearByAttractions(VisitedLocation visitedLocation, User user)
     {
         JsonArray jsonArray = new JsonArray();
-        foreach (var a in _rewardsService.ClosestFiveAttractions(visitedLocation.Location, user))
+        foreach (var a in await _rewardsService.ClosestFiveAttractions(visitedLocation.Location, user))
         {
             var attractionJson = new JsonObject
             {

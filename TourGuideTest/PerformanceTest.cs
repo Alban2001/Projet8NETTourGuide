@@ -54,11 +54,11 @@ namespace TourGuideTest
 
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
+                Task.WhenAll(
+                allUsers.Select(u => _fixture.TourGuideService.TrackUserLocation(u))
+            );
 
-            foreach (var user in allUsers)
-            {
-                _fixture.TourGuideService.TrackUserLocation(user);
-            }
+            Task.WaitAll();
             stopWatch.Stop();
             _fixture.TourGuideService.Tracker.StopTracking();
 
@@ -68,24 +68,33 @@ namespace TourGuideTest
         }
 
         [Fact]
-        public void HighVolumeGetRewards()
+        public async Task HighVolumeGetRewards()
         {
             //On peut ici augmenter le nombre d'utilisateurs pour tester les performances
-            _fixture.Initialize(10);
+            _fixture.Initialize(100);
 
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
 
-            Attraction attraction = _fixture.GpsUtil.GetAttractions()[0];
+            List<Attraction> attraction = await _fixture.GpsUtil.GetAttractions();
+
             List<User> allUsers = _fixture.TourGuideService.GetAllUsers();
-            allUsers.ForEach(u => u.AddToVisitedLocations(new VisitedLocation(u.UserId, attraction, DateTime.Now)));
 
-            allUsers.ForEach(u => _fixture.RewardsService.CalculateRewards(u));
+            allUsers.ForEach(u => u.AddToVisitedLocations(new VisitedLocation(u.UserId, attraction[0], DateTime.Now)));
 
-            foreach (var user in allUsers)
-            {
-                Assert.True(user.UserRewards.Count > 0);
-            }
+            Task.WhenAll(
+                allUsers.Select(u => _fixture.RewardsService.CalculateRewards(u))
+            );
+            Task.WaitAll();
+            
+            //allUsers.ForEach(u => _fixture.RewardsService.CalculateRewards(u));
+
+            //foreach (var user in allUsers)
+            //{
+            //    Assert.True(user.UserRewards.Count > 0);
+            //}
+
+            allUsers.ForEach(u => Assert.True(u.UserRewards.Count > 0));
             stopWatch.Stop();
             _fixture.TourGuideService.Tracker.StopTracking();
 
