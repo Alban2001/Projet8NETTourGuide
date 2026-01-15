@@ -19,17 +19,21 @@ public class GpsUtil
         try
         {
             // PERFORMANCE
-            Sleep();
 
-            double longitude = ThreadLocalRandom.NextDouble(-180.0, 180.0);
-            longitude = Math.Round(longitude, 6);
+            return await Task.Run(() =>
+            {
+                Sleep();
 
-            double latitude = ThreadLocalRandom.NextDouble(-90, 90);
-            latitude = Math.Round(latitude, 6);
+                double longitude = ThreadLocalRandom.NextDouble(-180.0, 180.0);
+                longitude = Math.Round(longitude, 6);
 
-            VisitedLocation visitedLocation = new(userId, new Locations(latitude, longitude), DateTime.UtcNow);
+                double latitude = ThreadLocalRandom.NextDouble(-90, 90);
+                latitude = Math.Round(latitude, 6);
 
-            return visitedLocation;
+                VisitedLocation visitedLocation = new(userId, new Locations(latitude, longitude), DateTime.UtcNow);
+
+                return visitedLocation;
+            });
         }
         finally
         {
@@ -45,10 +49,12 @@ public class GpsUtil
 
         try
         {
-            // PERFORMANCE
-            SleepLighter();
+            var attractions = await Task.Run(() =>
+            {
+                // PERFORMANCE
+                SleepLighter();
 
-            List<Attraction> attractions = new()
+                List<Attraction> attractions = new()
         {
             new Attraction("Disneyland", "Anaheim", "CA", 33.817595, -117.922008),
             new Attraction("Jackson Hole", "Jackson Hole", "WY", 43.582767, -110.821999),
@@ -77,6 +83,8 @@ public class GpsUtil
             new Attraction("Bronx Zoo", "Bronx", "NY", 40.852905, -73.872971),
             new Attraction("Cinderella Castle", "Orlando", "FL", 28.419411, -81.5812)
         };
+                return attractions;
+            });
 
             return attractions;
         }

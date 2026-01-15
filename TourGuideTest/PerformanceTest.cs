@@ -45,7 +45,7 @@ namespace TourGuideTest
         }
 
         [Fact]
-        public void HighVolumeTrackLocation()
+        public async Task HighVolumeTrackLocation()
         {
             //On peut ici augmenter le nombre d'utilisateurs pour tester les performances
             _fixture.Initialize(1000);
@@ -54,11 +54,13 @@ namespace TourGuideTest
 
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
-                Task.WhenAll(
-                allUsers.Select(u => _fixture.TourGuideService.TrackUserLocation(u))
-            );
+            List<Task> tasks = new List<Task>();
+            foreach (User user in allUsers)
+            {
+                tasks.Add(_fixture.TourGuideService.TrackUserLocation(user));
+            }
 
-            Task.WaitAll();
+            await Task.WhenAll(tasks);
             stopWatch.Stop();
             _fixture.TourGuideService.Tracker.StopTracking();
 
