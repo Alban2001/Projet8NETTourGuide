@@ -42,11 +42,11 @@ public class TripPricer
 
     public string GetProviderName(string apiKey, int adults)
     {
-        int multiple = ThreadLocalRandom.Current.Next(1, 10);
+        int multiple = ThreadLocalRandom.Current.Next(0, 10);
 
         return multiple switch
         {
-            1 => "Holiday Travels",
+            0 => "Holiday Travels",
             2 => "Enterprize Ventures Limited",
             3 => "Sunny Days",
             4 => "FlyAway Trips",
