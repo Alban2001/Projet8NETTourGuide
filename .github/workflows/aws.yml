@@ -2,9 +2,11 @@ name: CI for Projet8NETTourGuide
 
 on:
   push:
-    branches: dev
+    branches: 
+      - dev
   pull_request:
-    branches: master
+    branches: 
+      - master
 
 jobs:
   build:
