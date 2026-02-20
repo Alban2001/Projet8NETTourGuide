@@ -26,7 +26,7 @@ jobs:
         run: dotnet restore
 
       - name: Build solution
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build --configuration Debug --no-restore
 
 
   test:
@@ -47,7 +47,7 @@ jobs:
         run: dotnet restore
 
       - name: Run tests
-        run: dotnet test --configuration Release --verbosity normal
+        run: dotnet test --configuration Debug --verbosity normal
 
 
   quality:
