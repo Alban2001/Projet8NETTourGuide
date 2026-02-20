@@ -47,7 +47,7 @@ jobs:
         run: dotnet restore
 
       - name: Run tests
-        run: dotnet test --configuration Release --verbosity normal
+        run: dotnet test --verbosity detailed
 
 
   quality:
@@ -68,4 +68,5 @@ jobs:
         run: dotnet restore
 
       - name: Verify formatting & analyzers
-        run: dotnet format --verify-no-changes
+        run: dotnet format --verify-no-changes detailed
+ detailed
