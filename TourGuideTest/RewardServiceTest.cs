@@ -46,14 +46,19 @@ public class RewardServiceTest : IClassFixture<DependencyFixture>
         _fixture.Initialize(1);
         _fixture.RewardsService.SetProximityBuffer(int.MaxValue);
 
+        var attractions = await _fixture.GpsUtil.GetAttractions();
         var user = _fixture.TourGuideService.GetAllUsers().First();
-        _fixture.RewardsService.CalculateRewards(user);
+
+        foreach (Attraction attraction in attractions)
+        {
+            user.AddToVisitedLocations(new VisitedLocation(user.UserId, attraction, DateTime.Now));
+        }
+
+        await _fixture.RewardsService.CalculateRewards(user);
         var userRewards = _fixture.TourGuideService.GetUserRewards(user);
         _fixture.TourGuideService.Tracker.StopTracking();
 
-        var attractions = await _fixture.GpsUtil.GetAttractions();
-        var attraction = attractions.Count();
-        Assert.Equal(attraction, userRewards.Count);
+        Assert.Equal(attractions.Count(), userRewards.Count);
     }
 
 }
