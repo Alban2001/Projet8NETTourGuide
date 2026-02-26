@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Globalization;
+using System.Text.Json.Nodes;
 using TourGuide.LibrairiesWrappers.Interfaces;
 using TourGuide.Services.Interfaces;
 using TourGuide.Users;
@@ -49,9 +50,9 @@ public class TourGuideService : ITourGuideService
         return user.UserRewards;
     }
 
-    public VisitedLocation GetUserLocation(User user)
+    public async Task<VisitedLocation> GetUserLocation(User user)
     {
-        return user.VisitedLocations.Any() ? user.GetLastVisitedLocation() : TrackUserLocation(user);
+        return user.VisitedLocations.Any() ? user.GetLastVisitedLocation() : await TrackUserLocation(user);
     }
 
     public User GetUser(string userName)
@@ -82,26 +83,48 @@ public class TourGuideService : ITourGuideService
         return providers;
     }
 
-    public VisitedLocation TrackUserLocation(User user)
+    //public async Task<VisitedLocation> TrackUserLocation(User user)
+    //{
+    //    VisitedLocation visitedLocation = await _gpsUtil.GetUserLocation(user.UserId);
+    //    user.AddToVisitedLocations(visitedLocation);
+    //    await _rewardsService.CalculateRewards(user);
+    //    return visitedLocation;
+    //}
+
+    public async Task<VisitedLocation> TrackUserLocation(User user)
     {
-        VisitedLocation visitedLocation = _gpsUtil.GetUserLocation(user.UserId);
-        user.AddToVisitedLocations(visitedLocation);
-        _rewardsService.CalculateRewards(user);
+        VisitedLocation visitedLocation = await _gpsUtil.GetUserLocation(user.UserId);
+
+        lock (user.VisitedLocations)
+        {
+            user.AddToVisitedLocations(visitedLocation);
+        }
+
+        await _rewardsService.CalculateRewardsAsync(user);
+
         return visitedLocation;
     }
 
-    public List<Attraction> GetNearByAttractions(VisitedLocation visitedLocation)
+    public async Task<JsonArray> GetNearByAttractions(VisitedLocation visitedLocation, User user)
     {
-        List<Attraction> nearbyAttractions = new ();
-        foreach (var attraction in _gpsUtil.GetAttractions())
+        JsonArray jsonArray = new JsonArray();
+        foreach (var a in await _rewardsService.ClosestFiveAttractions(visitedLocation.Location, user))
         {
-            if (_rewardsService.IsWithinAttractionProximity(attraction, visitedLocation.Location))
+            var attractionJson = new JsonObject
             {
-                nearbyAttractions.Add(attraction);
-            }
+                ["AttractionName"] = a.Attraction.AttractionName,
+                ["Distance"] = a.Distance,
+                ["LatUser"] = visitedLocation.Location.Latitude,
+                ["LongUser"] = visitedLocation.Location.Longitude,
+                ["LatAttraction"] = a.Attraction.Latitude,
+                ["LongAttraction"] = a.Attraction.Longitude,
+                ["Rewards"] = a.RewardPoints
+            };
+
+            jsonArray.Add(attractionJson);
         }
 
-        return nearbyAttractions;
+        return jsonArray;
     }
 
     private void AddShutDownHook()

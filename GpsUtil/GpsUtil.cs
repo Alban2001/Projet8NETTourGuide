@@ -12,38 +12,49 @@ public class GpsUtil
 {
     private static readonly SemaphoreSlim rateLimiter = new(1000, 1000);
 
-    public VisitedLocation GetUserLocation(Guid userId)
+    public async Task<VisitedLocation> GetUserLocation(Guid userId)
     {
+        // PERFORMANCE
         rateLimiter.Wait();
         try
         {
-            Sleep();
+            // PERFORMANCE
 
-            double longitude = ThreadLocalRandom.NextDouble(-180.0, 180.0);
-            longitude = Math.Round(longitude, 6);
+            return await Task.Run(() =>
+            {
+                Sleep();
 
-            double latitude = ThreadLocalRandom.NextDouble(-90, 90);
-            latitude = Math.Round(latitude, 6);
+                double longitude = ThreadLocalRandom.NextDouble(-180.0, 180.0);
+                longitude = Math.Round(longitude, 6);
 
-            VisitedLocation visitedLocation = new(userId, new Locations(latitude, longitude), DateTime.UtcNow);
+                double latitude = ThreadLocalRandom.NextDouble(-90, 90);
+                latitude = Math.Round(latitude, 6);
 
-            return visitedLocation;
+                VisitedLocation visitedLocation = new(userId, new Locations(latitude, longitude), DateTime.UtcNow);
+
+                return visitedLocation;
+            });
         }
         finally
         {
+            // PERFORMANCE
             rateLimiter.Release();
         }
     }
 
-    public List<Attraction> GetAttractions()
+    public async Task<List<Attraction>> GetAttractions()
     {
+        // PERFORMANCE
         rateLimiter.Wait();
 
         try
         {
-            SleepLighter();
+            var attractions = await Task.Run(() =>
+            {
+                // PERFORMANCE
+                SleepLighter();
 
-            List<Attraction> attractions = new()
+                List<Attraction> attractions = new()
         {
             new Attraction("Disneyland", "Anaheim", "CA", 33.817595, -117.922008),
             new Attraction("Jackson Hole", "Jackson Hole", "WY", 43.582767, -110.821999),
@@ -72,11 +83,14 @@ public class GpsUtil
             new Attraction("Bronx Zoo", "Bronx", "NY", 40.852905, -73.872971),
             new Attraction("Cinderella Castle", "Orlando", "FL", 28.419411, -81.5812)
         };
+                return attractions;
+            });
 
             return attractions;
         }
         finally
         {
+            // PERFORMANCE
             rateLimiter.Release();
         }
     }
