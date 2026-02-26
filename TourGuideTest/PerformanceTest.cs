@@ -77,7 +77,7 @@ namespace TourGuideTest
 
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
-            
+
             List<Attraction> attraction = await _fixture.GpsUtil.GetAttractions();
             List<User> allUsers = _fixture.TourGuideService.GetAllUsers();
 

@@ -16,7 +16,7 @@ public class TripPricer
 
         // Sleep to simulate some latency
         Thread.Sleep(ThreadLocalRandom.Current.Next(1, 50));
-        
+
         for (int i = 0; i < 10; i++)
         {
             int multiple = ThreadLocalRandom.Current.Next(100, 700);
@@ -56,6 +56,6 @@ public class TripPricer
             8 => "Dancing Waves Cruselines and Partners",
             9 => "AdventureCo",
             _ => "Cure-Your-Blues"
-        };        
+        };
     }
 }
