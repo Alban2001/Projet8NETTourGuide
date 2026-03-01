@@ -1,6 +1,37 @@
-# Projet P8 Parcours étudiant .Net
+# Projet 8 : Améliorez votre application avec des systèmes distribués
 
-Aucune base de données n'est requise pour ce projet.
-L'accent est mis sur les tests de performances.
+**Date de création** : 01 mars 2026
+**Date de la dernière modification** : 01 mars 2026
+**Auteur** : Alban VOIRIOT
+**Informations techniques** :
 
-Forkez la branch Master et assurez vous que votre projet build.
+- **Technologies** : C#, .NET, Xunit
+- **Version de .NET ** : 8.0
+
+## Sommaire
+
+- [Contexte](#contexte)
+- [Installation](#installation)
+  - [Télécharger le projet](#télécharger-le-projet)
+- [Exécuter les tests](#exécuter-les-tests)
+
+## Contexte
+
+Ce projet a été conçu dans le cadre de ma formation de développeur d'applications Back-end .NET (OpenClassrooms) sur l'amélioration sur les performances d'une application, corrections de tests unitaire et CI automatique avec GitHub Actions
+
+
+## Installation
+
+### Télécharger le projet
+
+=> Pour télécharger le dossier, veuillez effectuer la commande GIT ou directement dans le GIT de Visual Studio : `git clone https://github.com/Alban2001/Projet8NETTourGuide.git` dans un dossier vide puis ouvrir la solution du projet.
+
+### Restaurer les dépendances
+
+=> Veuillez effectuer la commande : `dotnet restore` afin de pouvoir avoir tous les packages Nuget et composants installés pour éviter toute erreur de librairie manquante.
+
+### Exécuter les tests
+
+=> Allez dans l'onglet à droite (Explorateur de tests). Si cette partie n'est pas encore affichée, allez dans l'onglet "Test" en haut puis "Explorateur de tests".
+
+=> Vous pouvez soit éxécuter tous les tests ou bien exécuter un test en particulier à chaque fois.
