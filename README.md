@@ -1,8 +1,11 @@
 # Projet 8 : Améliorez votre application avec des systèmes distribués
 
 **Date de création** : 01 mars 2026
+
 **Date de la dernière modification** : 01 mars 2026
+
 **Auteur** : Alban VOIRIOT
+
 **Informations techniques** :
 
 - **Technologies** : C#, .NET, Xunit
