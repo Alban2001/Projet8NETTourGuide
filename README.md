@@ -30,8 +30,11 @@ Ce projet a été conçu dans le cadre de ma formation de développeur d'applica
 
 => Veuillez effectuer la commande : `dotnet restore` afin de pouvoir avoir tous les packages Nuget et composants installés pour éviter toute erreur de librairie manquante.
 
-### Exécuter les tests
+## Exécuter les tests
 
 => Allez dans l'onglet à droite (Explorateur de tests). Si cette partie n'est pas encore affichée, allez dans l'onglet "Test" en haut puis "Explorateur de tests".
 
 => Vous pouvez soit éxécuter tous les tests ou bien exécuter un test en particulier à chaque fois.
+
+=> Dans les performances de tests, vous apercevrez ceci [Fact(Skip = "Temporairement désactivé en CI")] sur le dessus des fonctions. Afin de les lancer, vous devez retirer les Skip sinon les tests seront ignorés. N'hésitez pas aussi à changer la valeur dans la procédure _fixture.Initialize(X) pour exécuter les performances avec un nombre d'utilisateurs.
+Pour rappel, le but de se projet a été d'améliorer les performances de l'application (trop lente) et prévoir une prévision de 100 000 utilisateurs par jour.
